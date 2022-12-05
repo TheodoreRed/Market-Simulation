@@ -48,29 +48,32 @@ class Buyer:
         pass
 
 
-class Stock:
+class Asset:
     def __init__(self, name, current_price):
         self.name = name
         self.current_price = current_price
         self.quantity = 0
 
 
-class Bond:
-    def __init__(self, name, face_value, rate):
-        self.name = name
-        self.current_price = int(0.5 * face_value)
+class Stock(Asset):
+    def __init__(self, name, current_price):
+        Asset.__init__(self, name, current_price)
+
+
+class Bond(Asset):
+    def __init__(self, name, current_price, rate):
+        Asset.__init__(self, name, current_price)
         self.rate = rate
-        self.quantity = 0
 
 
 RECENT_AVG_RATE = 0.0689
 ted = Buyer(10000, "Ted")
 ted.new_position(Stock("MSFT", 255), 3)
 ted.new_position(Stock("AAPL", 149), 1)
-ted.new_position(Bond("USA", 100, RECENT_AVG_RATE), 10)
+ted.new_position(Bond("USA", 50, RECENT_AVG_RATE), 12)
 ted.new_position(Stock("USA", 6), 10)
 
-ted.add_to_position(Bond, "USA", 10)
+ted.add_to_position(Bond, "USA", 11)
 ted.add_to_position(Stock, "USA", 190)
 
 
