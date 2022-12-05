@@ -15,6 +15,8 @@ class Buyer:
         for asset in self.all_assets:
             if new_asset.name == asset.name:
                 isNew = False
+                if type(new_asset) != type(asset):
+                    isNew = True
 
         if isNew:
             total_equity = new_asset.current_price * quantity
@@ -48,7 +50,7 @@ class Stock:
 class GovtBond:
     def __init__(self, name, face_value, rate):
         self.name = name
-        self.current_price = 0.5 * face_value
+        self.current_price = int(0.5 * face_value)
         self.rate = rate
         self.quantity = 0
 
@@ -58,14 +60,12 @@ ted = Buyer(10000, "Ted")
 ted.new_position(Stock("MSFT", 255), 3)
 ted.new_position(Stock("AAPL", 149), 1)
 ted.new_position(GovtBond("USA", 100, RECENT_AVG_RATE), 10)
+ted.new_position(Stock("USA", 6), 10)
 
 ted.add_to_position("MSFT", 1)
 ted.add_to_position("AAPL", 30)
 
 
 for asset in ted.all_assets:
-    print(asset.current_price, asset.quantity, asset.name)
-    if type(asset) == Stock:
-        print("Yes")
-
+    print(asset.name, asset.current_price, asset.quantity)
 print(ted.uninvested, ted.invested, ted.name)
