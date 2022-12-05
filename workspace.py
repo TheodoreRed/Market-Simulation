@@ -20,24 +20,32 @@ class Buyer:
 
         if isNew:
             total_equity = new_asset.current_price * quantity
-            new_asset.quantity += quantity
 
             # If you have the money
             if self.uninvested >= total_equity:
                 self.uninvested -= total_equity
                 self.invested += total_equity
                 self.all_assets.add(new_asset)
+                new_asset.quantity += quantity
+
             else:
                 print("not enough money")
         else:
             print("Not a new position")
 
-    def add_to_position(self, name, quantity):
+    def add_to_position(self, type_asset, name, quantity):
         for asset in self.all_assets:
-            if asset.name == name:
-                asset.quantity += quantity
-                self.uninvested -= asset.current_price * quantity
-                self.invested += asset.current_price * quantity
+            if type(asset) == type_asset:
+                if asset.name == name:
+                    self.uninvested -= asset.current_price * quantity
+                    self.invested += asset.current_price * quantity
+                    asset.quantity += quantity
+
+    def subtract_from_position():
+        pass
+
+    def close_position():
+        pass
 
 
 class Stock:
@@ -47,7 +55,7 @@ class Stock:
         self.quantity = 0
 
 
-class GovtBond:
+class Bond:
     def __init__(self, name, face_value, rate):
         self.name = name
         self.current_price = int(0.5 * face_value)
@@ -59,13 +67,25 @@ RECENT_AVG_RATE = 0.0689
 ted = Buyer(10000, "Ted")
 ted.new_position(Stock("MSFT", 255), 3)
 ted.new_position(Stock("AAPL", 149), 1)
-ted.new_position(GovtBond("USA", 100, RECENT_AVG_RATE), 10)
+ted.new_position(Bond("USA", 100, RECENT_AVG_RATE), 10)
 ted.new_position(Stock("USA", 6), 10)
 
-ted.add_to_position("MSFT", 1)
-ted.add_to_position("AAPL", 30)
+ted.add_to_position(Bond, "USA", 10)
+ted.add_to_position(Stock, "USA", 190)
 
 
 for asset in ted.all_assets:
-    print(asset.name, asset.current_price, asset.quantity)
-print(ted.uninvested, ted.invested, ted.name)
+    if type(asset) == Stock:
+        the_type = "Stock"
+    elif type(asset) == Bond:
+        the_type = "Bond"
+    print(
+        "{} {} : There are {} at a price of ${} dollars each".format(
+            the_type, asset.name, asset.quantity, asset.current_price
+        )
+    )
+print(
+    "In cash still: ${} Total invested: ${} Buyer name: {}".format(
+        ted.uninvested, ted.invested, ted.name
+    )
+)
