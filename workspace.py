@@ -66,13 +66,10 @@ class Buyer:
     def display(self):
         print("{}'s Current Portfolio".format(self.name))
         for asset in self.all_assets:
-            if type(asset) == Stock:
-                the_type = "Stock"
-            elif type(asset) == Bond:
-                the_type = "Bond"
+
             print(
                 "{} {} : {} of this asset at a price of ${} dollars each".format(
-                    the_type, asset.name, asset.quantity, asset.current_price
+                    asset.the_type, asset.name, asset.quantity, asset.current_price
                 )
             )
         print(
@@ -86,7 +83,7 @@ class Asset:
     def __init__(self, name, current_price):
         self.name = name
         self.current_price = current_price
-        self.quantity = 0
+        self.quantity = 0.0
 
         def val_of_asset(self):
             return self.current_price * self.quantity
@@ -95,6 +92,7 @@ class Asset:
 class Stock(Asset):
     def __init__(self, name, current_price, is_large_company):
         Asset.__init__(self, name, current_price)
+        self.the_type = "Stock"
         self.is_large_company = is_large_company
 
 
@@ -102,10 +100,17 @@ class Bond(Asset):
     def __init__(self, name, current_price):
         RECENT_AVG_RATE = 0.0689
         Asset.__init__(self, name, current_price)
+        self.the_type = "Bond"
         self.rate = RECENT_AVG_RATE
 
 
-ted = Buyer(10000, "Ted")
+class Crypto(Asset):
+    def __init__(self, name, current_price):
+        Asset.__init__(self, name, current_price)
+        self.the_type = "Crypto"
+
+
+ted = Buyer(100000, "Ted")
 ted.new_position(Stock("MSFT", 255, True), 3)
 ted.new_position(Stock("AAPL", 149, True), 15)
 ted.new_position(Bond("USA", 50), 12)
@@ -113,27 +118,13 @@ ted.new_position(Stock("USA", 6, False), 100)
 
 ted.add_to_position(Bond, "USA", 11)
 ted.add_to_position(Stock, "USA", 191)
-ted.display()
+
 ted.subtract_from_position(Stock, "AAPL", 1)
+ted.subtract_from_position(Stock, "USA", 222)
+
 
 ted.display()
 ted.add_to_position(Stock, "MSFT", 4)
+ted.new_position(Crypto("BTC", 17019), 4)
+
 ted.display()
-
-
-def display(self):
-    for asset in self.all_assets:
-        if type(asset) == Stock:
-            the_type = "Stock"
-        elif type(asset) == Bond:
-            the_type = "Bond"
-        print(
-            "{} {} : There are {} at a price of ${} dollars each".format(
-                the_type, asset.name, asset.quantity, asset.current_price
-            )
-        )
-    print(
-        "In cash still: ${} Total invested: ${} Buyer name: {}".format(
-            self.uninvested, self.invested, self.name
-        )
-    )
