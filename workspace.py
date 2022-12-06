@@ -4,11 +4,12 @@ os.system("cls")
 
 
 class Buyer:
-    def __init__(self, startingAmount, name):
-        self.uninvested = startingAmount
+    def __init__(self, starting_amount, name, is_risky):
+        self.uninvested = starting_amount
         self.invested = 0
         self.name = name
         self.all_assets = set()
+        self.is_risky = is_risky
 
     def new_position(self, new_asset, quantity):
         isNew = True
@@ -79,6 +80,16 @@ class Buyer:
         )
 
 
+class Retail(Buyer):
+    def __init__(self, starting_amount, name, is_risky):
+        Buyer.__init__(self, starting_amount, name, is_risky)
+
+
+class HedgeFund(Buyer):
+    def __init__(self, starting_amount, name, is_risky):
+        Buyer.__init__(self, starting_amount, name, is_risky)
+
+
 class Asset:
     def __init__(self, name, current_price):
         self.name = name
@@ -110,7 +121,8 @@ class Crypto(Asset):
         self.the_type = "Crypto"
 
 
-ted = Buyer(100000, "Ted")
+ted = Retail(100000, "Ted", False)
+
 ted.new_position(Stock("MSFT", 255, True), 3)
 ted.new_position(Stock("AAPL", 149, True), 15)
 ted.new_position(Bond("USA", 50), 12)
@@ -127,4 +139,6 @@ ted.display()
 ted.add_to_position(Stock, "MSFT", 4)
 ted.new_position(Crypto("BTC", 17019), 4)
 
+ted.display()
+ted.subtract_from_position(Crypto, "BTC", 2)
 ted.display()
