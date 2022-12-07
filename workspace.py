@@ -1,6 +1,8 @@
 import os
+import random
+import names
 
-os.system("cls")
+# os.system("cls")
 
 
 class Buyer:
@@ -35,7 +37,7 @@ class Buyer:
     def add_to_position(self, type_asset, name, quantity):
         for asset in self.all_assets:
             if self.uninvested >= asset.current_price * quantity:
-                if type(asset) == type_asset:
+                if asset.the_type == type_asset:
                     if asset.name == name:
                         self.uninvested -= asset.current_price * quantity
                         self.invested += asset.current_price * quantity
@@ -54,7 +56,7 @@ class Buyer:
         for asset in self.all_assets:
 
             # type and name create a unique key
-            if type(asset) == type_asset:
+            if asset.the_type == type_asset:
                 if asset.name == name:
                     if quantity >= asset.quantity:
                         self.close_position(asset)
@@ -63,6 +65,7 @@ class Buyer:
                         self.uninvested += asset.current_price * quantity
                         self.invested -= asset.current_price * quantity
                         asset.quantity -= quantity
+                        break
 
     def display(self):
         print("{}'s Current Portfolio".format(self.name))
@@ -74,8 +77,8 @@ class Buyer:
                 )
             )
         print(
-            "In cash still: ${} Total invested: ${} Buyer name: {}\n".format(
-                self.uninvested, self.invested, self.name
+            "In cash : ${} Invested: ${} Buyer: {} Risky: {}\n".format(
+                self.uninvested, self.invested, self.name, self.is_risky
             )
         )
 
@@ -121,24 +124,59 @@ class Crypto(Asset):
         self.the_type = "Crypto"
 
 
-ted = Retail(100000, "Ted", False)
+class Market:
+    def __init__(self, num_buyers, num_assets):
 
-ted.new_position(Stock("MSFT", 255, True), 3)
-ted.new_position(Stock("AAPL", 149, True), 15)
-ted.new_position(Bond("USA", 50), 12)
-ted.new_position(Stock("USA", 6, False), 100)
+        self.all_buyers = set()
 
-ted.add_to_position(Bond, "USA", 11)
-ted.add_to_position(Stock, "USA", 191)
+        def get_random_name():
+            name = names.get_last_name()
+            for buyer in self.all_buyers:
+                if buyer.name == name:
+                    get_random_name()
+            return name
 
-ted.subtract_from_position(Stock, "AAPL", 1)
-ted.subtract_from_position(Stock, "USA", 222)
+        while len(self.all_buyers) < num_buyers:
+            temp = get_random_name()
+
+            T_or_F = random.randint(0, 1)
+            if T_or_F == 0:
+                T_or_F = False
+            else:
+                T_or_F = True
+
+            if len(self.all_buyers) % 3 == 0:
+                temp += "_Capital"
+                starting_amount = random.randint(1000000, 1000000000)
+                self.all_buyers.add(HedgeFund(starting_amount, temp, T_or_F))
+            else:
+                starting_amount = random.randint(1000, 250000)
+                self.all_buyers.add(Retail(starting_amount, temp, T_or_F))
 
 
-ted.display()
-ted.add_to_position(Stock, "MSFT", 4)
-ted.new_position(Crypto("BTC", 17019), 4)
+market = Market(12, 100)
+for x in market.all_buyers:
+    print(x.display())
 
-ted.display()
-ted.subtract_from_position(Crypto, "BTC", 2)
-ted.display()
+
+def main():
+    ted = Retail(100000, "Ted", False)
+
+    ted.new_position(Stock("MSFT", 255, True), 3)
+    ted.new_position(Stock("AAPL", 149, True), 15)
+    ted.new_position(Bond("USA", 50), 12)
+    ted.new_position(Stock("USA", 6, False), 100)
+
+    ted.add_to_position("Bond", "USA", 11)
+    ted.add_to_position("Stock", "USA", 191)
+
+    ted.subtract_from_position("Stock", "AAPL", 1)
+    ted.subtract_from_position("Stock", "USA", 224)
+
+    ted.display()
+    ted.add_to_position("Stock", "MSFT", 4)
+    ted.new_position(Crypto("BTC", 17019), 4)
+
+    ted.display()
+    ted.subtract_from_position("Crypto", "BTC", 2)
+    ted.display()
