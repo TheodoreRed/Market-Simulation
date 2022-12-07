@@ -111,11 +111,10 @@ class Stock(Asset):
 
 
 class Bond(Asset):
-    def __init__(self, name, current_price):
-        RECENT_AVG_RATE = 0.0689
+    def __init__(self, name, current_price, rate):
         Asset.__init__(self, name, current_price)
         self.the_type = "Bond"
-        self.rate = RECENT_AVG_RATE
+        self.rate = rate
 
 
 class Crypto(Asset):
@@ -128,6 +127,28 @@ class Market:
     def __init__(self, num_buyers, num_assets):
 
         self.all_buyers = set()
+        self.all_assets = set()
+
+        def get_unique_bond_name():
+            bond_name = names.get_last_name()[0:3].upper()
+            if len(self.all_assets) == 0:
+                return bond_name
+            for asset in self.all_assets:
+                if asset.name == bond_name and asset.the_type == "Bond":
+                    get_unique_bond_name()
+            return bond_name
+
+        def get_random_Bond():
+            bond_price = 50
+            rate = random.uniform(0, 1)
+            name = get_unique_bond_name()
+            return Bond(name, bond_price, rate)
+
+        while len(self.all_assets) < num_assets - 1:
+            # if len(self.all_assets) % 5 == 0:
+            self.all_assets.add(get_random_Bond())
+            # else:
+            # self.all_assets.add(names.get_first_name())
 
         def get_random_name():
             name = names.get_last_name()
@@ -154,9 +175,12 @@ class Market:
                 self.all_buyers.add(Retail(starting_amount, temp, T_or_F))
 
 
-market = Market(12, 100)
+market = Market(12, 2)
 for x in market.all_buyers:
-    print(x.display())
+    pass  # print(x.display())
+
+for x in market.all_assets:
+    print(x.name, x.the_type, x.rate)
 
 
 def main():
