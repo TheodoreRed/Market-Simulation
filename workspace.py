@@ -129,6 +129,13 @@ class Market:
         self.all_buyers = set()
         self.all_assets = set()
 
+        def get_true_false():
+            T_or_F = random.randint(0, 1)
+            if T_or_F == 0:
+                return False
+            else:
+                return True
+
         def get_unique_bond_name():
             bond_name = names.get_last_name()[0:3].upper()
             if len(self.all_assets) == 0:
@@ -138,11 +145,27 @@ class Market:
                     get_unique_bond_name()
             return bond_name
 
+        # returns a random Bond
         def get_random_Bond():
             bond_price = 50
             rate = random.uniform(0, 1)
             name = get_unique_bond_name()
             return Bond(name, bond_price, False, rate)
+
+        def get_unique_crypto_name():
+            first2 = names.get_first_name()[0:2].upper()
+            last2 = names.get_last_name()[0:2].upper()
+            crypto_name = first2 + last2
+            for asset in self.all_assets:
+                if asset.name == crypto_name and asset.the_type == "Crypto":
+                    get_unique_bond_name()
+            return crypto_name
+
+        # returns a random crypto
+        def get_random_Crypto():
+            name = get_unique_crypto_name()
+            price = random.randint(1, 18000)
+            return Crypto(name, price, True)
 
         def get_unique_stock_name():
             stock_name = names.get_last_name()[0:4].upper()
@@ -153,25 +176,22 @@ class Market:
                     get_unique_stock_name()
             return stock_name
 
-        def get_true_false():
-            T_or_F = random.randint(0, 1)
-            if T_or_F == 0:
-                return False
-            else:
-                return True
-
+        # returns a random stock
         def get_random_Stock():
             name = get_unique_stock_name()
             price = random.randint(1, 500)
             T_or_F = get_true_false()
             return Stock(name, price, T_or_F)
 
+        # initializes all the assets
         while len(self.all_assets) < num_assets:
-            if len(self.all_assets) % 2 == 0:
+            the_length = len(self.all_assets)
+            if the_length % 5 == 0:
                 self.all_assets.add(get_random_Bond())
+            elif the_length % 4 == 0:
+                self.all_assets.add(get_random_Crypto())
             else:
                 self.all_assets.add(get_random_Stock())
-            # self.all_assets.add(names.get_first_name())
 
         def get_random_name():
             name = names.get_last_name()
@@ -180,14 +200,11 @@ class Market:
                     get_random_name()
             return name
 
+        # initializes all the buyers
         while len(self.all_buyers) < num_buyers:
             temp = get_random_name()
 
-            T_or_F = random.randint(0, 1)
-            if T_or_F == 0:
-                T_or_F = False
-            else:
-                T_or_F = True
+            T_or_F = get_true_false()
 
             if len(self.all_buyers) % 3 == 0:
                 temp += "_Capital"
@@ -197,16 +214,21 @@ class Market:
                 starting_amount = random.randint(1000, 250000)
                 self.all_buyers.add(Retail(starting_amount, temp, T_or_F))
 
+    def show_market(self):
+        print("-----Buyers-----")
+        for x in self.all_buyers:
+            print(x.name, x.uninvested, x.is_risky)
 
-market = Market(12, 10)
-for x in market.all_buyers:
-    pass  # print(x.display())
+        print("-----Assets-----")
+        for x in self.all_assets:
+            if hasattr(x, "rate"):
+                print(x.name, x.the_type, x.rate)
+            else:
+                print(x.name, x.the_type, x.current_price)
 
-for x in market.all_assets:
-    if hasattr(x, "rate"):
-        print(x.name, x.the_type, x.rate)
-    else:
-        print(x.name, x.the_type, x.current_price)
+
+market = Market(10, 10)
+market.show_market()
 
 
 def main():

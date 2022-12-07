@@ -1,2 +1,2 @@
 # stock-sim-inheritance
-How does it look eyes?
+Simualates the buying and selling of a market with assets and buyers
