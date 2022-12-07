@@ -206,13 +206,37 @@ class Market:
 
             T_or_F = get_true_false()
 
-            if len(self.all_buyers) % 3 == 0:
+            if len(self.all_buyers) % 10 == 0:
                 temp += "_Capital"
                 starting_amount = random.randint(1000000, 1000000000)
                 self.all_buyers.add(HedgeFund(starting_amount, temp, T_or_F))
             else:
                 starting_amount = random.randint(1000, 250000)
                 self.all_buyers.add(Retail(starting_amount, temp, T_or_F))
+
+    def get_true_false(self):
+        T_or_F = random.randint(0, 1)
+        if T_or_F == 0:
+            return False
+        else:
+            return True
+
+    def one_day(self):
+        # https://www.financialsamurai.com/how-much-does-the-stock-market-move-on-average-a-day/
+        avg_stock_change_daily = 0.0073
+        for x in self.all_assets:
+            if x.is_volatile:
+
+                if x.the_type == "Stock":
+
+                    # changes a little more because it's volatile
+                    change = x.current_price * (
+                        avg_stock_change_daily * random.randint(2, 4)
+                    )
+                    if self.get_true_false():
+                        x.current_price += change
+                    else:
+                        x.current_price -= change
 
     def show_market(self):
         print("-----Buyers-----")
@@ -222,12 +246,14 @@ class Market:
         print("-----Assets-----")
         for x in self.all_assets:
             if hasattr(x, "rate"):
-                print(x.name, x.the_type, x.rate)
+                print(x.name, x.the_type, x.is_volatile, x.rate)
             else:
-                print(x.name, x.the_type, x.current_price)
+                print(x.name, x.the_type, x.is_volatile, x.current_price)
 
 
 market = Market(10, 10)
+market.show_market()
+market.one_day()
 market.show_market()
 
 
