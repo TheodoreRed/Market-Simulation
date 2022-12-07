@@ -1,11 +1,5 @@
 import yfinance as yf
+import names
 
-with open("tickers.txt", "r") as f:
-    data = f.read()
-    data = data.split("\n")
-# print(data)
-
-for ticker in data:
-    x = yf.Ticker(ticker).info
-    price = x["regularMarketPrice"]
-    print(ticker, price)
+name = names.get_last_name()[:-4]
+print(name)

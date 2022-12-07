@@ -94,32 +94,32 @@ class HedgeFund(Buyer):
 
 
 class Asset:
-    def __init__(self, name, current_price):
+    def __init__(self, name, current_price, is_volatile):
         self.name = name
         self.current_price = current_price
         self.quantity = 0.0
+        self.is_volatile = is_volatile
 
         def val_of_asset(self):
             return self.current_price * self.quantity
 
 
 class Stock(Asset):
-    def __init__(self, name, current_price, is_large_company):
-        Asset.__init__(self, name, current_price)
+    def __init__(self, name, current_price, is_volatile):
+        Asset.__init__(self, name, current_price, is_volatile)
         self.the_type = "Stock"
-        self.is_large_company = is_large_company
 
 
 class Bond(Asset):
-    def __init__(self, name, current_price, rate):
-        Asset.__init__(self, name, current_price)
+    def __init__(self, name, current_price, is_volatile, rate):
+        Asset.__init__(self, name, current_price, is_volatile)
         self.the_type = "Bond"
         self.rate = rate
 
 
 class Crypto(Asset):
-    def __init__(self, name, current_price):
-        Asset.__init__(self, name, current_price)
+    def __init__(self, name, current_price, is_volatile):
+        Asset.__init__(self, name, current_price, is_volatile)
         self.the_type = "Crypto"
 
 
@@ -142,12 +142,35 @@ class Market:
             bond_price = 50
             rate = random.uniform(0, 1)
             name = get_unique_bond_name()
-            return Bond(name, bond_price, rate)
+            return Bond(name, bond_price, False, rate)
 
-        while len(self.all_assets) < num_assets - 1:
-            # if len(self.all_assets) % 5 == 0:
-            self.all_assets.add(get_random_Bond())
-            # else:
+        def get_unique_stock_name():
+            stock_name = names.get_last_name()[0:4].upper()
+            if len(self.all_assets) == 0:
+                return stock_name
+            for asset in self.all_assets:
+                if asset.name == stock_name and asset.the_type == "Stock":
+                    get_unique_stock_name()
+            return stock_name
+
+        def get_true_false():
+            T_or_F = random.randint(0, 1)
+            if T_or_F == 0:
+                return False
+            else:
+                return True
+
+        def get_random_Stock():
+            name = get_unique_stock_name()
+            price = random.randint(1, 500)
+            T_or_F = get_true_false()
+            return Stock(name, price, T_or_F)
+
+        while len(self.all_assets) < num_assets:
+            if len(self.all_assets) % 2 == 0:
+                self.all_assets.add(get_random_Bond())
+            else:
+                self.all_assets.add(get_random_Stock())
             # self.all_assets.add(names.get_first_name())
 
         def get_random_name():
@@ -175,12 +198,15 @@ class Market:
                 self.all_buyers.add(Retail(starting_amount, temp, T_or_F))
 
 
-market = Market(12, 2)
+market = Market(12, 10)
 for x in market.all_buyers:
     pass  # print(x.display())
 
 for x in market.all_assets:
-    print(x.name, x.the_type, x.rate)
+    if hasattr(x, "rate"):
+        print(x.name, x.the_type, x.rate)
+    else:
+        print(x.name, x.the_type, x.current_price)
 
 
 def main():
