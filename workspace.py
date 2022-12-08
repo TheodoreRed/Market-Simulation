@@ -14,6 +14,10 @@ class Buyer:
         self.all_assets = set()
         self.is_risky = is_risky
 
+    def account_total(self):
+        for asset in self.all_assets:
+            pass  # total += asset
+
     def new_position(self, new_asset, quantity):
         isNew = True
         # for asset in self.all_assets:
@@ -28,7 +32,7 @@ class Buyer:
                 self.uninvested -= total_equity
                 self.invested += total_equity
                 self.all_assets.add(new_asset)
-                new_asset.quantity = quantity
+                new_asset.quantity += quantity
 
             else:
                 print("not enough money")
@@ -77,12 +81,23 @@ class Buyer:
                     asset.the_type, asset.name, asset.quantity, asset.current_price
                 )
             )
-        print("Started with ${}".format(self.starting_amount))
+        print("Started with: ${} ".format(self.starting_amount))
+        print("Currently have {}".format(self.account_total()))
         print(
             "In cash : ${} Invested: ${} Buyer: {} Risky: {}\n".format(
                 self.uninvested, self.invested, self.name, self.is_risky
             )
         )
+
+    def one_day(self, all_asset_in_market):
+        new_asset = random.choice(list(all_asset_in_market))
+        if self.is_risky:
+            while new_asset.is_volatile == False:
+                new_asset = random.choice(list(all_asset_in_market))
+            if new_asset not in self.all_assets:
+                self.new_position(new_asset, 1)
+            else:
+                self.new_position(new_asset, 1)
 
 
 class Retail(Buyer):
@@ -315,32 +330,31 @@ class Market:
         print("Total Buyer Amount: " + str(self.get_total_value_of_market()))
 
 
-market = Market(10, 9)
-market.show_market()
-market.one_day()
-market.show_market()
+# market = Market(10, 9)
+
 # market.one_day()
 # market.show_market()
 
 
 def main():
-    ted = Retail(100000, "Ted", False)
+    stock = Stock("MSFT", 245, True)
+    buyer = Retail(25000, "Bill", True)
+    print(stock.current_price)
+    stock.one_day()
+    print(stock.current_price)
+    tempset = set()
+    tempset.add(stock)
+    buyer.one_day(tempset)
+    buyer.display()
+    buyer.one_day(tempset)
+    buyer.display()
+    for x in buyer.all_assets:
+        print(x.current_price)
+    print(buyer.account_total())
+    for num in range(50):
+        stock.one_day()
+    buyer.display()
 
-    ted.new_position(Stock("MSFT", 255, True), 3)
-    ted.new_position(Stock("AAPL", 149, True), 15)
-    ted.new_position(Bond("USA", 50), 12)
-    ted.new_position(Stock("USA", 6, False), 100)
 
-    ted.add_to_position("Bond", "USA", 11)
-    ted.add_to_position("Stock", "USA", 191)
-
-    ted.subtract_from_position("Stock", "AAPL", 1)
-    ted.subtract_from_position("Stock", "USA", 224)
-
-    ted.display()
-    ted.add_to_position("Stock", "MSFT", 4)
-    ted.new_position(Crypto("BTC", 17019), 4)
-
-    ted.display()
-    ted.subtract_from_position("Crypto", "BTC", 2)
-    ted.display()
+if __name__ == "__main__":
+    main()
