@@ -7,6 +7,7 @@ import names
 
 class Buyer:
     def __init__(self, starting_amount, name, is_risky):
+        self.starting_amount = starting_amount
         self.uninvested = starting_amount
         self.invested = 0
         self.name = name
@@ -15,9 +16,9 @@ class Buyer:
 
     def new_position(self, new_asset, quantity):
         isNew = True
-        for asset in self.all_assets:
-            if new_asset.name == asset.name and type(new_asset) == type(asset):
-                isNew = False
+        # for asset in self.all_assets:
+        # if new_asset.name == asset.name and type(new_asset) == type(asset):
+        # isNew = False
 
         if isNew:
             total_equity = new_asset.current_price * quantity
@@ -27,7 +28,7 @@ class Buyer:
                 self.uninvested -= total_equity
                 self.invested += total_equity
                 self.all_assets.add(new_asset)
-                new_asset.quantity += quantity
+                new_asset.quantity = quantity
 
             else:
                 print("not enough money")
@@ -76,6 +77,7 @@ class Buyer:
                     asset.the_type, asset.name, asset.quantity, asset.current_price
                 )
             )
+        print("Started with ${}".format(self.starting_amount))
         print(
             "In cash : ${} Invested: ${} Buyer: {} Risky: {}\n".format(
                 self.uninvested, self.invested, self.name, self.is_risky
@@ -103,11 +105,34 @@ class Asset:
         def val_of_asset(self):
             return self.current_price * self.quantity
 
+    def get_true_false(self):
+        T_or_F = random.randint(0, 1)
+        if T_or_F == 0:
+            return False
+        else:
+            return True
+
 
 class Stock(Asset):
     def __init__(self, name, current_price, is_volatile):
         Asset.__init__(self, name, current_price, is_volatile)
         self.the_type = "Stock"
+
+    def one_day(self):
+        avg_change = 0.0073
+        if self.is_volatile:
+            change = avg_change * random.randint(0, 5)
+            change *= self.current_price
+            if self.get_true_false():
+                self.current_price += change
+            else:
+                self.current_price -= change
+        else:
+            change = avg_change * self.current_price
+            if self.get_true_false():
+                self.current_price += change
+            else:
+                self.current_price -= change
 
 
 class Bond(Asset):
@@ -116,11 +141,21 @@ class Bond(Asset):
         self.the_type = "Bond"
         self.rate = rate
 
+    def one_day(self):
+        self.current_price += self.rate
+
 
 class Crypto(Asset):
     def __init__(self, name, current_price, is_volatile):
         Asset.__init__(self, name, current_price, is_volatile)
         self.the_type = "Crypto"
+
+    def one_day(self):
+        change = (0.01 * random.randint(0, 5)) * self.current_price
+        if self.get_true_false():
+            self.current_price += change
+        else:
+            self.current_price -= change
 
 
 class Market:
@@ -237,27 +272,7 @@ class Market:
         # https://www.financialsamurai.com/how-much-does-the-stock-market-move-on-average-a-day/
         avg_stock_change_daily = 0.0073
         for asset in self.all_assets:
-            if asset.is_volatile:
-                if asset.the_type == "Stock":
-
-                    # changes a little more because it's volatile
-                    change = asset.current_price * (
-                        avg_stock_change_daily * random.randint(0, 4)
-                    )
-                    self.change(asset, change)
-                elif asset.the_type == "Crypto":
-                    change = asset.current_price * (
-                        avg_stock_change_daily * random.randint(0, 5)
-                    )
-                    self.change(asset, change)
-            # if the asset is not volatile
-            else:
-                # Bonds are guarenteed to go up
-                if asset.the_type == "Bond":
-                    asset.current_price += asset.rate
-                if asset.the_type == "Stock":
-                    change = asset.current_price * avg_stock_change_daily
-                    self.change(asset, change)
+            asset.one_day()
 
     def get_risky_asset(self):
         new_asset = random.choice(list(self.all_assets))
@@ -266,24 +281,30 @@ class Market:
         return new_asset
 
     def one_day(self):
-        self.one_day_for_assets()
         # What do buyers do in a day
         for buyer in self.all_buyers:
-            buyer.display()
+            # buyer.display()
             if buyer.is_risky:
+                print("This person's risky")
                 if type(buyer) == Retail:
+                    print("This person's a retail investor")
                     risky_asset = self.get_risky_asset()
                     print("----------------------------------")
                     print(
                         risky_asset.the_type, risky_asset.name, risky_asset.is_volatile
                     )
-                    buyer.new_position(risky_asset, 1)
+                    if risky_asset not in buyer.all_assets:
+                        buyer.new_position(risky_asset, 12)
+                        # TODO: Find a way to get the risky position that was added and and increment quantity by one
+                        # buyer.all_assets
+                        buyer.display()
+        self.one_day_for_assets()
 
     def show_market(self):
         print("-----Buyers-----")
         for x in self.all_buyers:
             print(x.name, x.uninvested, x.is_risky)
-            print(x.display())
+            # print(x.display())
 
         print("-----Assets-----")
         for x in self.all_assets:
@@ -294,12 +315,12 @@ class Market:
         print("Total Buyer Amount: " + str(self.get_total_value_of_market()))
 
 
-market = Market(10, 10)
+market = Market(10, 9)
 market.show_market()
 market.one_day()
 market.show_market()
-market.one_day()
-market.show_market()
+# market.one_day()
+# market.show_market()
 
 
 def main():
