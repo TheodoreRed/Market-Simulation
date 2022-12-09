@@ -72,6 +72,13 @@ class Buyer:
         return total + self.cash
 
     def get_total_profit_loss(self):
+        return self.get_account_total() - self.starting_amount
+
+    def get_percent_change(self):
+        percent_change = (self.get_account_total() / self.starting_amount) - 1
+        return percent_change
+
+    def print_total_profit_loss(self):
         account_total = self.get_account_total()
         if self.starting_amount > account_total:
             print("P/L : -${}".format(self.starting_amount - account_total))
@@ -125,12 +132,11 @@ class Buyer:
         print("Account Total:       {}".format(self.get_account_total()))
         print("Cash:                {}".format(self.cash))
         print("Total Invested:      {}".format(self.get_total_invested()))
-        self.get_total_profit_loss()
+        self.print_total_profit_loss()
         print("Number of Assets:    {}".format(len(self.all_assets["asset"])))
         print("Total quantity of assets: {}".format(self.get_total_shares()))
         print("Total Transactions: {}".format(self.num_transactions))
         print("Are they risky:      {}".format(self.is_risky))
-        self.print_portfolio()
         print("-----------------------------------")
 
 
@@ -180,21 +186,3 @@ class Retail(Buyer):
 class HedgeFund(Buyer):
     def __init__(self, starting_amount, is_risky, uniqueID):
         Buyer.__init__(self, starting_amount, is_risky, uniqueID)
-
-
-asset = ASSET.Stock(100, False, 0)
-asset_2 = ASSET.Asset(125, True, 1)
-asset_3 = ASSET.Asset(45, False, 2)
-buyer = Retail(100000, True, 0)
-
-temp_market_assets = []
-temp_market_assets.append(asset)
-temp_market_assets.append(asset_2)
-temp_market_assets.append(asset_3)
-
-# buyer.display_stats()
-
-# for i in range(15):
-#    buyer.one_day(temp_market_assets)
-#    random.choice(temp_market_assets).current_price -= 1
-#    buyer.display_stats()

@@ -62,14 +62,3 @@ class Stock(Asset):
             else:
                 change = rate_change_down * self.current_price
                 self.current_price -= change
-
-
-stock = Stock(100, False, 0)
-stock.display()
-
-stock.one_day()
-stock.display()
-for x in range(1000):
-    stock.one_day()
-print("-  -   -   -")
-stock.display()
