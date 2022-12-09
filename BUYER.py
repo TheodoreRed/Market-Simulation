@@ -52,8 +52,11 @@ class Buyer:
                     self.all_assets["total"][idx] = 0
                     self.num_transactions += 1
                     print("Inside")
-
                 else:
+                    self.cash += quantity * asset.current_price
+                    self.all_assets["total"][idx] -= quantity * asset.current_price
+                    self.all_assets["shares"][idx] -= quantity
+                    self.num_transactions += 1
                     print("Outside")
 
     def get_total_invested(self):
@@ -88,12 +91,15 @@ class Buyer:
                     self.all_assets["total"][x],
                 )
             )
-
             invested = self.all_assets["total"][x]
+            try:
+                per_share = invested / self.all_assets["shares"][x]
+            except:
+                per_share = 0
             print(
                 "Assets: {} Cost Per Asset: {}".format(
                     self.all_assets["shares"][x],
-                    invested / self.all_assets["shares"][x],
+                    per_share,
                 )
             )
             current_equity = (
@@ -133,22 +139,44 @@ class Retail(Buyer):
     def __init__(self, starting_amount, is_risky, uniqueID):
         Buyer.__init__(self, starting_amount, is_risky, uniqueID)
 
+    def get_risky_asset(self, assets_in_market):
+        risky_asset = random.choice(assets_in_market)
+
+        while risky_asset.is_volatile == False:
+            risky_asset = random.choice(assets_in_market)
+
+        return risky_asset
+
+    def one_day(self, assets_in_market):
+        if self.is_risky:
+
+            # 75% chance it happens
+            if random.randint(1, 100) < 75:
+                quant = random.randint(1, 5)
+
+                # If true we buy
+                if self.get_T_F():
+                    risky_asset = self.get_risky_asset(assets_in_market)
+                    self.add_asset(risky_asset, quant)
+                # Or else we sell
+                else:
+                    my_asset = random.choice(self.all_assets)
+                    self.subtract_asset(my_asset, random.randint(1, 10))
+
+
+class HedgeFund(Buyer):
+    def __init__(self, starting_amount, is_risky, uniqueID):
+        Buyer.__init__(self, starting_amount, is_risky, uniqueID)
+
 
 asset = ASSET.Asset(0, 100, True)
-asset_2 = ASSET.Asset(1, 125, False)
+asset_2 = ASSET.Asset(1, 125, True)
+asset_3 = ASSET.Asset(2, 45, False)
 buyer = Retail(1000, True, 0)
 
-buyer.add_asset(asset, 1)
-buyer.display_stats()
-
-asset.current_price = 99
-
-buyer.add_asset(asset, 1)
-buyer.display_stats()
-
-
-buyer.add_asset(asset_2, 1)
-buyer.display_stats()
-asset_2.current_price = 126
-buyer.add_asset(asset_2, 1)
+temp_market_assets = []
+temp_market_assets.append(asset)
+temp_market_assets.append(asset_2)
+temp_market_assets.append(asset_3)
+buyer.one_day(temp_market_assets)
 buyer.display_stats()
