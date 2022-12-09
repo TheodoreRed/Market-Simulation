@@ -24,13 +24,28 @@ class Market:
             cash = random.randint(100, 100000)
             self.all_buyers.append(B.Retail(cash, get_true_false(), x))
 
+    def one_day(self):
+        for buyer in self.all_buyers:
+            buyer.one_day(self.all_assets)
+        for asset in self.all_assets:
+            asset.one_day()
 
-market = Market(10, 100)
-for x in market.all_assets:
-    x.display()
+    def simulate(self, num_days):
+        for x in range(num_days):
+            self.one_day()
 
-for x in market.all_buyers:
-    x.one_day(market.all_assets)
 
-for x in market.all_buyers:
-    x.display_stats()
+def main():
+    while True:
+        num_buyers = int(input("Input number of buyers : "))
+        num_assets = int(input("Input number of Assets : "))
+        market = Market(num_buyers, num_assets)
+        days = int(input("Number of days to simulate : "))
+        market.simulate(days)
+        break
+    for buyer in market.all_buyers:
+        buyer.display_stats()
+
+
+if __name__ == "__main__":
+    main()

@@ -51,13 +51,11 @@ class Buyer:
                     self.all_assets["shares"][idx] = 0
                     self.all_assets["total"][idx] = 0
                     self.num_transactions += 1
-                    print("Inside")
                 else:
                     self.cash += quantity * asset.current_price
                     self.all_assets["total"][idx] -= quantity * asset.current_price
                     self.all_assets["shares"][idx] -= quantity
                     self.num_transactions += 1
-                    print("Outside")
 
     def get_total_invested(self):
         total = 0
@@ -84,7 +82,7 @@ class Buyer:
         return current_equity - invested
 
     def print_portfolio(self):
-        print("---Assets---")
+        print("/\/\/\/\/\/\ Assets /\/\/\/\/\/\/")
         for x in range(len(self.all_assets["asset"])):
             print(
                 "Name : {} Invested: {}".format(
@@ -175,7 +173,6 @@ class Retail(Buyer):
                         my_asset = random.choice(self.all_assets["asset"])
                         self.subtract_asset(my_asset, random.randint(1, 5))
         else:
-            print("Added here")
             asset = random.choice(assets_in_market)
             self.add_asset(asset, random.randint(1, 10))
 
@@ -195,9 +192,9 @@ temp_market_assets.append(asset)
 temp_market_assets.append(asset_2)
 temp_market_assets.append(asset_3)
 
-buyer.display_stats()
+# buyer.display_stats()
 
-for i in range(15):
-    buyer.one_day(temp_market_assets)
-    random.choice(temp_market_assets).current_price -= 1
-    buyer.display_stats()
+# for i in range(15):
+#    buyer.one_day(temp_market_assets)
+#    random.choice(temp_market_assets).current_price -= 1
+#    buyer.display_stats()
