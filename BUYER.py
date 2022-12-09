@@ -84,6 +84,7 @@ class Buyer:
         return current_equity - invested
 
     def print_portfolio(self):
+        print("---Assets---")
         for x in range(len(self.all_assets["asset"])):
             print(
                 "Name : {} Invested: {}".format(
@@ -148,20 +149,35 @@ class Retail(Buyer):
         return risky_asset
 
     def one_day(self, assets_in_market):
-        if self.is_risky:
+        if len(self.all_assets["asset"]) > 0:
+            if self.is_risky:
 
-            # 75% chance it happens
-            if random.randint(1, 100) < 75:
-                quant = random.randint(1, 5)
+                # 75% chance it happens
+                if random.randint(1, 100) < 75:
 
-                # If true we buy
-                if self.get_T_F():
-                    risky_asset = self.get_risky_asset(assets_in_market)
-                    self.add_asset(risky_asset, quant)
-                # Or else we sell
-                else:
-                    my_asset = random.choice(self.all_assets)
-                    self.subtract_asset(my_asset, random.randint(1, 10))
+                    # If true we buy
+                    if self.get_T_F():
+                        risky_asset = self.get_risky_asset(assets_in_market)
+                        self.add_asset(risky_asset, random.randint(1, 10))
+                    # Or else we sell
+                    else:
+                        my_asset = random.choice(self.all_assets["asset"])
+                        self.subtract_asset(my_asset, random.randint(1, 10))
+            # If not risky
+            else:
+
+                # 25% chance it happens
+                if random.randint(1, 100) < 25:
+                    if self.get_T_F():
+                        asset = random.choice(assets_in_market)
+                        self.add_asset(asset, random.randint(1, 5))
+                    else:
+                        my_asset = random.choice(self.all_assets["asset"])
+                        self.subtract_asset(my_asset, random.randint(1, 5))
+        else:
+            print("Added here")
+            asset = random.choice(assets_in_market)
+            self.add_asset(asset, random.randint(1, 10))
 
 
 class HedgeFund(Buyer):
@@ -169,14 +185,19 @@ class HedgeFund(Buyer):
         Buyer.__init__(self, starting_amount, is_risky, uniqueID)
 
 
-asset = ASSET.Asset(0, 100, True)
-asset_2 = ASSET.Asset(1, 125, True)
-asset_3 = ASSET.Asset(2, 45, False)
-buyer = Retail(1000, True, 0)
+asset = ASSET.Stock(100, False, 0)
+asset_2 = ASSET.Asset(125, True, 1)
+asset_3 = ASSET.Asset(45, False, 2)
+buyer = Retail(100000, True, 0)
 
 temp_market_assets = []
 temp_market_assets.append(asset)
 temp_market_assets.append(asset_2)
 temp_market_assets.append(asset_3)
-buyer.one_day(temp_market_assets)
+
 buyer.display_stats()
+
+for i in range(15):
+    buyer.one_day(temp_market_assets)
+    random.choice(temp_market_assets).current_price -= 1
+    buyer.display_stats()
