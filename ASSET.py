@@ -10,14 +10,6 @@ class Asset:
         self.uniqueID = uniqueID
         self.current_price = current_price
         self.is_volatile = is_volatile
-        self.name = names.get_last_name()[0:4].upper()
-
-    def display(self):
-        print("--------------------------")
-        print("UniqueID :      {}".format(self.uniqueID))
-        print("Current price : {}".format(self.current_price))
-        print("Is Volatile :   {}".format(self.is_volatile))
-        print("Name :          {}".format(self.name))
 
         # print(self.uniqueID, self.current_price, self.is_volatile, self.name)
 
@@ -32,6 +24,24 @@ class Asset:
 class Stock(Asset):
     def __init__(self, current_price, is_volatile, uniqueID):
         Asset.__init__(self, current_price, is_volatile, uniqueID)
+
+        def get_name():
+            char1 = random.choice(names.get_last_name()).upper()
+            char2 = random.choice(names.get_first_name()).upper()
+            char3 = random.choice(names.get_last_name()).upper()
+            char4 = random.choice(names.get_first_name()).upper()
+            return char1 + char2 + char3 + char4
+
+        self.name = get_name()
+
+    def display(self):
+        print("--------------------------")
+        print("UniqueID {}  Name : {}".format(self.uniqueID, self.name))
+        print("Current price : {}".format(self.current_price))
+        print("Is Volatile :   {}".format(self.is_volatile))
+
+    def get_name(self):
+        return self.name
 
     def is_black_swan_event(self):
         if random.randint(1, 10) == 10:

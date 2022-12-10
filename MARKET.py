@@ -57,13 +57,17 @@ class Market:
     def get_best_buyer(self):
         highest = 0
         for idx, buyer in enumerate(self.all_buyers):
+            # best = buyer
             if buyer.get_total_profit_loss() > highest:
                 highest = buyer.get_total_profit_loss()
                 best = buyer
         print("===================================")
         print("||              BEST             ||")
         print("===================================")
+        # try:
         best.display_stats()
+        # except:
+        #   pass
 
     def get_worst_buyer(self):
         lowest = 99999999
@@ -78,15 +82,23 @@ class Market:
 
     def display_buyer_info(self):
         print("===================================")
-        print("||        BUYER STATS           ||")
+        print("||        BUYER INFO           ||")
         print("===================================")
         for buyer in self.all_buyers:
             buyer.display_stats()
 
+    def display_asset_info(self):
+        print("===================================")
+        print("||        ASSET INFO           ||")
+        print("===================================")
+        for asset in self.all_assets:
+            asset.display()
+
     def display(self):
         self.display_buyer_info()
+        self.display_asset_info()
         print("===================================")
-        print("||        MARKET STATS           ||")
+        print("||        MARKET INFO           ||")
         print("===================================")
         print("Buyers : {}".format(len(self.all_buyers)))
         print("Assets : {}".format(len(self.all_assets)))
@@ -94,11 +106,7 @@ class Market:
         print("In the market : {}".format(self.get_total_invested()))
         print("Uninvested : {}".format(self.get_total_cash()))
         print("Value of All assets : {}".format(self.market_start_value))
-        print(
-            "Total Market Change : ${}".format(
-                self.get_all_assets_value() - self.market_start_value
-            )
-        )
+        print("Total Market Change : ${}".format(self.get_total_market_change()))
         print("Market Percent Change : {}".format("None"))
         self.get_best_buyer()
         self.get_worst_buyer()

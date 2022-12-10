@@ -15,6 +15,7 @@ class Buyer:
         # self.value_all_assets = 0
         self.is_risky = is_risky
         self.num_transactions = 0
+        self.name = names.get_full_name()
 
     def get_T_F(self):
         T_or_F = random.randint(0, 1)
@@ -127,7 +128,7 @@ class Buyer:
 
     def display_stats(self):
         print("-----------------------------------")
-        print("Buyer {}".format(self.uniqueID))
+        print("Buyer {}  Name: {}".format(self.uniqueID, self.name))
         print("Starting amount:     {}".format(self.starting_amount))
         print("Account Total:       {}".format(self.get_account_total()))
         print("Cash:                {}".format(self.cash))
@@ -186,3 +187,29 @@ class Retail(Buyer):
 class HedgeFund(Buyer):
     def __init__(self, starting_amount, is_risky, uniqueID):
         Buyer.__init__(self, starting_amount, is_risky, uniqueID)
+        hedgey = ["_Capital_Management", "_Investments", "_Finance"]
+        self.name = names.get_last_name() + random.choice(hedgey)
+
+    def print_name(self):
+        print(self.name)
+
+    def one_day(self):
+        if self.is_risky:
+            pass
+
+
+asset1 = ASSET.Stock(10, True, 0)
+asset2 = ASSET.Stock(69, True, 1)
+asset3 = ASSET.Stock(37, True, 2)
+list_assets = []
+list_assets.append(asset1)
+list_assets.append(asset2)
+list_assets.append(asset3)
+fund = HedgeFund(100000, True, 0)
+fund.display_stats()
+fund.add_asset(asset1, 1)
+fund.display_stats()
+asset1.current_price -= 10
+fund.display_stats()
+fund.subtract_asset(asset1, 1)
+fund.display_stats()
