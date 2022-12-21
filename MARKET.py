@@ -54,6 +54,9 @@ class Market:
             total += buyer.cash
         return total
 
+    def get_market_percent_change(self):
+        return (self.get_total_market_change() / self.market_start_value) * 100.0
+
     def get_best_buyer(self):
         highest = 0
         for idx, buyer in enumerate(self.all_buyers):
@@ -107,7 +110,11 @@ class Market:
         print("Uninvested : {}".format(self.get_total_cash()))
         print("Value of All assets : {}".format(self.market_start_value))
         print("Total Market Change : ${}".format(self.get_total_market_change()))
-        print("Market Percent Change : {}".format("None"))
+        print(
+            "Market Percent Change : %{}".format(
+                round(self.get_market_percent_change(), 2)
+            )
+        )
         self.get_best_buyer()
         self.get_worst_buyer()
         print("==================================")

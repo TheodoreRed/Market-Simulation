@@ -196,20 +196,3 @@ class HedgeFund(Buyer):
     def one_day(self):
         if self.is_risky:
             pass
-
-
-asset1 = ASSET.Stock(10, True, 0)
-asset2 = ASSET.Stock(69, True, 1)
-asset3 = ASSET.Stock(37, True, 2)
-list_assets = []
-list_assets.append(asset1)
-list_assets.append(asset2)
-list_assets.append(asset3)
-fund = HedgeFund(100000, True, 0)
-fund.display_stats()
-fund.add_asset(asset1, 1)
-fund.display_stats()
-asset1.current_price -= 10
-fund.display_stats()
-fund.subtract_asset(asset1, 1)
-fund.display_stats()

@@ -5,6 +5,6 @@ Run the file `MARKET.py`
 - Input how many buyers and assets there will be
 - Input the number of days to simulate
 ## Display
-- Prints off all buyer data
-- Prints Market Data
+- Prints off all Buyer and Asset data
+- Prints Market data
 - Prints who was best and worst buyer
